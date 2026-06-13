@@ -1,0 +1,1539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Split-screen Interactive English Test — Mã đề 1101</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --paper: #ffffff;
+      --ink: #14213d;
+      --muted: #607086;
+      --line: #d9e2ef;
+      --primary: #1d4ed8;
+      --primary-dark: #153e9f;
+      --good-bg: #dcfce7;
+      --good-border: #16a34a;
+      --good-text: #14532d;
+      --bad-bg: #fee2e2;
+      --bad-border: #dc2626;
+      --bad-text: #7f1d1d;
+      --soft-blue: #eff6ff;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+      --small-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #dbeafe 0, transparent 30rem), var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      flex: 0 0 auto;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .topbar-inner {
+      width: 100%;
+      padding: 12px clamp(14px, 2.5vw, 24px);
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .brand strong {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      letter-spacing: -0.02em;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.92rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .timer-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .timer-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    #timer {
+      min-width: 116px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      font-size: clamp(1.55rem, 4vw, 2.35rem);
+      line-height: 1;
+      padding: 10px 14px;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24);
+    }
+
+    #timer.warning {
+      background: linear-gradient(135deg, #f97316, #c2410c);
+      animation: pulse 1.2s infinite;
+    }
+
+    #timer.expired {
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.035); }
+    }
+
+    .split-main {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(340px, 48%) minmax(420px, 52%);
+      overflow: hidden;
+    }
+
+    .pane {
+      min-height: 0;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      padding: clamp(14px, 2vw, 24px);
+    }
+
+    /* left intro removed */
+    .passage-pane {
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(239, 246, 255, 0.82), rgba(255, 255, 255, 0.72));
+    }
+
+    .passage-pane > .pane-heading { display: none !important; }
+
+    .question-pane {
+      background: rgba(248, 250, 252, 0.78);
+    }
+
+    .pane-heading {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin-bottom: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--small-shadow);
+    }
+
+    .pane-heading h1,
+    .pane-heading h2 {
+      margin: 0 0 6px;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      font-size: clamp(1.25rem, 2.2vw, 1.85rem);
+    }
+
+    .pane-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: stretch;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(248, 250, 252, 0.78));
+      backdrop-filter: blur(10px);
+    }
+
+    .progress-card, .actions {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--small-shadow);
+    }
+
+    .progress-card { padding: 14px; }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .progress-bar {
+      overflow: hidden;
+      height: 10px;
+      border-radius: 999px;
+      background: #e2e8f0;
+    }
+
+    #progressFill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+      transition: width 220ms ease;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.98rem;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+      font-family: inherit;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { cursor: not-allowed; opacity: 0.68; }
+
+    .primary-btn {
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 10px 18px rgba(37, 99, 235, 0.25);
+    }
+
+    .primary-btn:hover:not(:disabled) { background: var(--primary-dark); }
+
+    .ghost-btn {
+      background: #edf2f7;
+      color: var(--ink);
+    }
+
+    .result-panel {
+      display: none;
+      margin: 0 0 16px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .result-panel.show { display: block; }
+
+    .result-panel h2 { margin: 0 0 6px; }
+    .result-panel p { margin: 0; color: var(--muted); }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .result-item {
+      border-radius: 16px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .result-item b {
+      display: block;
+      font-size: 1.55rem;
+      line-height: 1.1;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(20, 1fr);
+      gap: 6px;
+      margin: 0 0 18px;
+    }
+
+    .nav-btn {
+      padding: 8px 4px;
+      min-width: 0;
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      font-size: 0.84rem;
+      box-shadow: none;
+    }
+
+    .nav-btn.answered {
+      border-color: #93c5fd;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .nav-btn.nav-correct {
+      border-color: var(--good-border);
+      background: var(--good-bg);
+      color: var(--good-text);
+    }
+
+    .nav-btn.nav-wrong {
+      border-color: var(--bad-border);
+      background: var(--bad-bg);
+      color: var(--bad-text);
+    }
+
+    .passage-card,
+    .section {
+      margin: 0 0 18px;
+    }
+
+    .passage-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: clamp(18px, 2.6vw, 26px);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .passage-card.active-passage {
+      border-color: #60a5fa;
+      box-shadow: 0 16px 34px rgba(37, 99, 235, 0.14);
+    }
+
+    .passage-head {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #075985;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .passage-head h2,
+    .section-title {
+      margin: 0 0 6px;
+      font-size: clamp(1.13rem, 2.2vw, 1.45rem);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .instruction {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .passage-body h3 {
+      margin: 0 0 12px;
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+
+    .passage-body p,
+    .prompt-card p { margin: 0 0 13px; }
+    .passage-body p:last-child,
+    .prompt-card p:last-child { margin-bottom: 0; }
+    .adapted { text-align: right; color: var(--muted); font-size: 0.92rem; }
+
+    .prompt-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .prompt-card {
+      border: 1px solid var(--line);
+      border-left: 5px solid #93c5fd;
+      border-radius: 18px;
+      padding: 14px;
+      background: #fbfdff;
+      scroll-margin-top: 88px;
+      transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .prompt-card.active-passage {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.12);
+    }
+
+    .prompt-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: #1e3a8a;
+    }
+
+    .section-header {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .question-section-header {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      margin-bottom: 12px;
+    }
+
+    .questions-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .q-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-left: 6px solid #cbd5e1;
+      border-radius: 20px;
+      padding: clamp(16px, 2.3vw, 22px);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+      scroll-margin-top: 122px;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .q-card:hover { transform: translateY(-1px); }
+
+    .q-card.correct {
+      border-left-color: var(--good-border);
+      background: linear-gradient(90deg, rgba(220, 252, 231, 0.55), white 32%);
+    }
+
+    .q-card.incorrect {
+      border-left-color: var(--bad-border);
+      background: linear-gradient(90deg, rgba(254, 226, 226, 0.62), white 34%);
+    }
+
+    .q-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .q-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      border-radius: 14px;
+      color: white;
+      background: #334155;
+      font-weight: 900;
+    }
+
+    .q-stem {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .q-stem > p:first-child { margin-top: 0; }
+    .q-stem > p:last-child { margin-bottom: 0; }
+
+    .prompt-link {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      box-shadow: none;
+      font-size: 0.82rem;
+    }
+
+    .prompt-link:hover:not(:disabled) {
+      background: #dbeafe;
+    }
+
+    .badge {
+      display: none;
+      flex-shrink: 0;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .submitted .badge { display: inline-flex; }
+    .badge.good { background: var(--good-bg); color: var(--good-text); border-color: var(--good-border); }
+    .badge.bad { background: var(--bad-bg); color: var(--bad-text); border-color: var(--bad-border); }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fbfdff;
+      cursor: pointer;
+      min-height: 56px;
+      transition: border 140ms ease, background 140ms ease, transform 140ms ease;
+    }
+
+    .choice:hover { border-color: #93c5fd; background: #eff6ff; }
+    .choice input { margin-top: 4px; accent-color: var(--primary); flex: 0 0 auto; }
+    .choice-letter { font-weight: 900; color: #0f172a; }
+    .choice-text { min-width: 0; }
+
+    .choice.correct-answer {
+      border-color: var(--good-border);
+      background: var(--good-bg);
+      color: var(--good-text);
+      font-weight: 700;
+    }
+
+    .choice.wrong-answer {
+      border-color: var(--bad-border);
+      background: var(--bad-bg);
+      color: var(--bad-text);
+      font-weight: 700;
+    }
+
+    .choice input:disabled { opacity: 1; }
+
+    .bottom-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 24px 0 12px;
+    }
+
+    .footnote {
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+      margin: 0 0 24px;
+    }
+
+    @media (max-width: 1060px) {
+      .split-main { grid-template-columns: 44% 56%; }
+      .choices { grid-template-columns: 1fr; }
+      .nav-grid { grid-template-columns: repeat(10, 1fr); }
+      .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      body { overflow: hidden; }
+      .topbar-inner { align-items: stretch; flex-direction: column; gap: 10px; }
+      .timer-wrap { justify-content: space-between; }
+      #timer { min-width: 130px; }
+      .split-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(210px, 42%) minmax(260px, 58%);
+      }
+      .passage-pane { border-right: 0; border-bottom: 1px solid var(--line); }
+      .toolbar { grid-template-columns: 1fr; }
+      .actions { justify-content: stretch; }
+      .actions button { flex: 1; }
+      .q-top { flex-direction: column; }
+      .q-number { width: 38px; height: 38px; }
+      .result-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { display: block; overflow: visible; background: white; }
+      .topbar, .toolbar, .bottom-actions, .nav-grid, .prompt-link { display: none !important; }
+      .split-main { display: block; overflow: visible; }
+      .pane { overflow: visible; padding: 0; }
+      .passage-pane { border-right: 0; }
+      .pane-heading, .passage-card, .q-card, .question-section-header { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <strong>Interactive English Multiple Choice Test</strong>
+        <span>Mã đề 1101 • Split-screen mode • 40 questions</span>
+      </div>
+      <div class="timer-wrap" aria-label="Countdown timer">
+        <span class="timer-label">Time left</span>
+        <div id="timer">60:00</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="split-main">
+    <aside id="passagePane" class="pane passage-pane" aria-label="Text passages"></aside>
+
+    <section id="rightPane" class="pane question-pane" aria-label="Questions and answer choices">
+      <section class="pane-heading">
+        <h1>Đề tiếng Anh THPTQG 2026 — Mã đề 1101</h1>
+        <p>Read in the left half, answer in the right half. Click <strong>Check Answers</strong> to lock the test and see your score out of 10.</p>
+      </section>
+
+      <section class="toolbar" aria-label="Quiz controls">
+        <div class="progress-card">
+          <div class="progress-top">
+            <span id="progressText">Answered: 0 / 40</span>
+            <span id="statusText">In progress</span>
+          </div>
+          <div class="progress-bar" aria-hidden="true"><div id="progressFill"></div></div>
+        </div>
+        <div class="actions">
+          <button id="checkBtn" class="primary-btn" type="button">Check Answers</button>
+          <button id="resetBtn" class="ghost-btn" type="button">Restart</button>
+        </div>
+      </section>
+
+      <section id="resultPanel" class="result-panel" aria-live="polite"></section>
+      <section id="questionNav" class="nav-grid" aria-label="Question navigation"></section>
+      <section id="quiz"></section>
+
+      <div class="bottom-actions">
+        <button id="checkBtnBottom" class="primary-btn" type="button">Check Answers</button>
+        <button id="resetBtnBottom" class="ghost-btn" type="button">Restart</button>
+      </div>
+      <p class="footnote">Tip: the numbered buttons jump to each question and move the matching text into view.</p>
+    </section>
+  </main>
+
+  <script>
+    const quizData = [
+  {
+    "title": "Questions 1–6: Green Hands Campaign",
+    "instruction": "Read the following leaflet and mark the letter A, B, C or D to indicate the option that best fits each numbered blank.",
+    "content": "\n        <h3>GREEN HANDS CAMPAIGN</h3>\n        <p>The School Youth Union is officially launching the “Green Hands” eco-friendly campaign. We invite every student to participate in this vital project. If everyone (1) _____ together, we will make a difference at our school.</p>\n        <p>The primary goal is to expand students’ (2) _____ of plastic pollution. To achieve this, the school will have colour-coded bins (3) _____ in the schoolyard. Also, waste-disposal workshops will be held to teach students to (4) _____ out plastics properly. These sessions ensure resources are reused effectively.</p>\n        <p>We aim to (5) _____ sustainable habits through consistent daily activities. We firmly believe that small individual efforts will turn into long-lasting changes.</p>\n        <p>Volunteers will help remove plastics from every corner of the schoolyard. Please sign up online. Your (6) _____ is essential for success. Don’t miss out – join hands with us today!</p>\n        ",
+    "questions": [
+      {
+        "id": 1,
+        "stem": "(1) _____",
+        "choices": {
+          "A": "work",
+          "B": "worked",
+          "C": "have worked",
+          "D": "works"
+        }
+      },
+      {
+        "id": 2,
+        "stem": "(2) _____",
+        "choices": {
+          "A": "focus",
+          "B": "attention",
+          "C": "emphasis",
+          "D": "knowledge"
+        }
+      },
+      {
+        "id": 3,
+        "stem": "(3) _____",
+        "choices": {
+          "A": "install",
+          "B": "being installed",
+          "C": "installed",
+          "D": "installing"
+        }
+      },
+      {
+        "id": 4,
+        "stem": "(4) _____",
+        "choices": {
+          "A": "catch",
+          "B": "check",
+          "C": "fill",
+          "D": "sort"
+        }
+      },
+      {
+        "id": 5,
+        "stem": "(5) _____",
+        "choices": {
+          "A": "promote",
+          "B": "protect",
+          "C": "provide",
+          "D": "produce"
+        }
+      },
+      {
+        "id": 6,
+        "stem": "(6) _____",
+        "choices": {
+          "A": "cooperate",
+          "B": "cooperation",
+          "C": "cooperatively",
+          "D": "cooperative"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Questions 7–11: Sentence Arrangement",
+    "instruction": "Mark the letter A, B, C or D to indicate the best arrangement of utterances or sentences to make a cohesive and coherent exchange or text.",
+    "content": "",
+    "questions": [
+      {
+        "id": 7,
+        "stem": "\n                <p><strong>Question 7.</strong></p>\n                <p>Dear Mr Tran,</p>\n                <p>a. To accept this scholarship, please sign the attached agreement and submit it before 15 July.<br>\n                b. Your performance during the selection process reflects dedication and potential.<br>\n                c. The grant covers full tuition for the programme and a monthly allowance of $500.<br>\n                d. It is our great pleasure to inform you that you have been selected as a recipient of the Pinnacle Scholarship for the 2026-2027 academic year.<br>\n                e. Should you have questions regarding the terms or conditions, please contact our admissions office.</p>\n                <p>Yours sincerely,</p>\n            ",
+        "choices": {
+          "A": "d – c – e – a – b",
+          "B": "d – e – b – c – a",
+          "C": "d – b – c – a – e",
+          "D": "d – a – e – b – c"
+        }
+      },
+      {
+        "id": 8,
+        "stem": "\n                <p><strong>Question 8.</strong></p>\n                <p>a. Customer: Here you are. Thanks for your help.<br>\n                b. Customer: I’ve booked an online ticket for the concert this weekend, but haven’t got the confirmation email.<br>\n                c. Assistant: Please show me the receipt and I’ll check it immediately.</p>\n            ",
+        "choices": {
+          "A": "b – a – c",
+          "B": "a – b – c",
+          "C": "b – c – a",
+          "D": "a – c – b"
+        }
+      },
+      {
+        "id": 9,
+        "stem": "\n                <p><strong>Question 9.</strong></p>\n                <p>a. The convenience, however, carries inherent risks, because every connected device is a potential entry point for hackers to steal sensitive data.<br>\n                b. Smart homes have become essential features of modern life, transforming how individuals manage their domestic environments efficiently.<br>\n                c. The integrated systems offer convenience, such as turning off the oven from afar or locking doors with a single smartphone tap.<br>\n                d. Anyone investing in smart hardware should carefully weigh the appeal of automation against the time and care required to keep a home network secure.<br>\n                e. A poorly updated router or a default password left unchanged has, in several recent reported cases, allowed strangers to listen in on private family conversations.</p>\n            ",
+        "choices": {
+          "A": "e – d – c – a – b",
+          "B": "c – a – d – b – e",
+          "C": "b – c – a – e – d",
+          "D": "d – e – b – c – a"
+        }
+      },
+      {
+        "id": 10,
+        "stem": "\n                <p><strong>Question 10.</strong></p>\n                <p>a. Celine: Why do you say so?<br>\n                b. Celine: I’ve been considering taking a gap year. What’s your view?<br>\n                c. Celine: Thanks. I’ll think about it.<br>\n                d. Steward: The thing is, your studies won’t be interrupted.<br>\n                e. Steward: If I were you, I would go to university right after graduating from high school.</p>\n            ",
+        "choices": {
+          "A": "b – e – a – d – c",
+          "B": "b – d – a – e – c",
+          "C": "a – d – b – e – c",
+          "D": "a – e – b – d – c"
+        }
+      },
+      {
+        "id": 11,
+        "stem": "\n                <p><strong>Question 11.</strong></p>\n                <p>a. Early data from the first quarter revealed a fifteen percent reduction in peak-hour delays and noticeably cleaner air across central wards.<br>\n                b. Motorists entering the central zone had to pay a fee, with the generated revenue allocated for cycle lanes and bus routes.<br>\n                c. Years of unchecked expansion of private vehicle ownership had rendered the commute in Stoneville the slowest in the region.<br>\n                d. The encouraging outcomes suggested that the scheme would be expanded to other districts.<br>\n                e. The city authorities implemented a simple yet controversial intervention: charging a congestion fee.</p>\n            ",
+        "choices": {
+          "A": "b – a – d – e – c",
+          "B": "c – e – b – a – d",
+          "C": "e – b – d – c – a",
+          "D": "a – e – d – c – b"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Questions 12–16: Wealth and Visible Spending",
+    "instruction": "Read the following passage and mark the letter A, B, C or D to indicate the option that best fits each numbered blank.",
+    "content": "\n        <p>Among the many paradoxes surrounding money, one deserves particular attention: the wealth that truly counts is precisely the wealth you cannot observe. When a sleek Lamborghini glides past, it is normal (12) _____. Closer inspection often tells a different story. A large number of those who drive luxury vehicles are, in fact, only modest earners (13) _____ to the privilege of being seen in such a car. It is uncertain to say whether someone driving a car worth one hundred thousand pounds is affluent. Yet the certain thing is that they have one hundred thousand pounds less than they did before they got the car, or one hundred thousand pounds more in debt (14) _____.</p>\n        <p>We tend to judge wealth by what we see as visible details are the only evidence we have access to. Nobody walks around displaying a printout of their savings, (15) _____ handbags, holiday villas, posts on social networks — to decide who is prospering. Contemporary marketing has fed this habit, packaging the illusion of success as a saleable product. (16) _____. It hides in the upgrade declined, the jewellery left in the display case, the watch never bought, the wardrobe never expanded and the business-class seat politely waved away.</p>\n        <p>In short, wealth is whatever money has not yet been swapped for tangible goods. That is why distinguishing wealthy from rich deserves careful thought; mistaking one for the other has quietly ruined many a budget.</p>\n        <p class=\"adapted\">Adapted from <em>Psychology of Money</em></p>\n        ",
+    "questions": [
+      {
+        "id": 12,
+        "stem": "(12) _____",
+        "choices": {
+          "A": "for concluding that the person must be doing well behind the wheel",
+          "B": "a good conclusion about whoever sits behind the wheel must be",
+          "C": "a good conclusion about the wheel behind which the person must sit",
+          "D": "to conclude that whoever sits behind the wheel must be doing well"
+        }
+      },
+      {
+        "id": 13,
+        "stem": "(13) _____",
+        "choices": {
+          "A": "who have committed a disproportionate share of their monthly pay",
+          "B": "a disproportionate share of whose monthly pay is committed",
+          "C": "whose monthly pay is disproportionately committed to sharing",
+          "D": "who are committed to sharing their monthly pay disproportionately"
+        }
+      },
+      {
+        "id": 14,
+        "stem": "(14) _____",
+        "choices": {
+          "A": "You know that it is beyond nothing at all",
+          "B": "Beyond your knowledge, that is nothing",
+          "C": "Beyond that, you know nothing at all",
+          "D": "Beyond that, nothing is unknown to you"
+        }
+      },
+      {
+        "id": 15,
+        "stem": "(15) _____",
+        "choices": {
+          "A": "so we instead rely on their outward appearances",
+          "B": "instead they rely on the appearances on the outside",
+          "C": "instead of their reliable outward appearances",
+          "D": "yet they appear reliable on the outside instead"
+        }
+      },
+      {
+        "id": 16,
+        "stem": "(16) _____",
+        "choices": {
+          "A": "Indeed, wealth in reality is advertised as the refusal of authenticity itself",
+          "B": "However, the reality is that authentic wealth refuses to advertise itself",
+          "C": "Real wealth itself, in reality, is advertised to refuse to be authentic",
+          "D": "Authentic advertisements are, therefore, the refusal of real wealth itself"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Questions 17–26: Environmental Services and Opportunity Costs",
+    "instruction": "Read the passage and mark the letter A, B, C or D to indicate the best answer to each question.",
+    "content": "\n        <p>It is important to stress that environmental services have costs, even when they are produced without any human input. All costs ought to be measured as opportunity costs. The opportunity cost for environmental services is the net benefit <strong>forgone</strong> because the resources providing the service can no longer be used in the next most beneficial way. Resources are not free if they can be put to alternative uses.</p>\n        <p>Consider a stretch of river that can be used either for white-water canoeing or for electric power generation. Because the dam that generates the power would flood the rapids, the two uses are incompatible. The opportunity cost of saving the river for white-water canoeing is the net benefit taken out — after accounting for the cost of generation and distribution — for electricity. Conversely, the opportunity cost of building the dam is everything the unspoiled river would have produced: the recreation, the wildlife, the scenery, and whatever value future generations might place upon experiencing the rapids themselves.</p>\n        <p>This insight has far-reaching implications for development policy. <strong>[I]</strong> Many decisions that appear at first to be costless choices in favour of growth turn out, on closer inspection, to be choices against something else. <strong>[II]</strong> Cutting down a forest for cropland is not free; it is paid for in carbon storage, biodiversity, and the regulating services the forest performed silently. <strong>[III]</strong> Diverting a river to irrigate fields is not free; the price is whatever the river was doing before the diversion. <strong>[IV]</strong> Even leaving land untouched is not free, for the income that intensive use might have generated is traded off as well.</p>\n        <p>Economic development, in this view, is never simply a question of whether a project yields a positive return. It is a question of whether the return exceeds the value of what must be relinquished. Policies that recognise this — by attaching prices to scarce environmental services, or by requiring decision-makers to weigh both sides of the account — do not stand against development. <strong>They</strong> insist that the development chosen be worth what it truly costs. The danger lies not in counting too much, but in counting too little.</p>\n        <p class=\"adapted\">Adapted from <em>Environmental Economics and Policy</em></p>\n        ",
+    "questions": [
+      {
+        "id": 17,
+        "stem": "The word <strong>forgone</strong> in paragraph 1 is closest in meaning to _____.",
+        "choices": {
+          "A": "given up",
+          "B": "ended up",
+          "C": "filled up",
+          "D": "made up"
+        }
+      },
+      {
+        "id": 18,
+        "stem": "According to paragraph 1, the costs of environmental services are _____.",
+        "choices": {
+          "A": "calculated based on the direct financial input provided for natural resources",
+          "B": "determined by the market value of the natural resources themselves",
+          "C": "insignificant as these services require almost no human labour to produce",
+          "D": "present whether or not human effort is involved in creating these services"
+        }
+      },
+      {
+        "id": 19,
+        "stem": "Which of the following is <strong>NOT</strong> implied in paragraph 2?",
+        "choices": {
+          "A": "Hydroelectric generation and white-water canoeing cannot coexist on the same stretch of river.",
+          "B": "The opportunity cost of the dam construction includes intangible benefits that are sacrificed.",
+          "C": "Recreational activities and power generation impose equal environmental burdens on the river.",
+          "D": "The intrinsic value attached to the river may extend beyond its potential use for hydroelectric generation."
+        }
+      },
+      {
+        "id": 20,
+        "stem": "Where in paragraph 3 does the following sentence best fit?<br><em>Such hidden costs become apparent only when one pauses to consider what nature was quietly doing on its own.</em>",
+        "choices": {
+          "A": "[III]",
+          "B": "[II]",
+          "C": "[IV]",
+          "D": "[I]"
+        }
+      },
+      {
+        "id": 21,
+        "stem": "Which of the following best summarises paragraph 3?",
+        "choices": {
+          "A": "Policymakers should take the management of natural resources into consideration.",
+          "B": "Initiatives that are perceived as harmless may actually involve underlying sacrifices.",
+          "C": "Long-term ecological balance usually takes precedence over immediate financial gain.",
+          "D": "Economic growth schemes should be halted once ecological disruption is detected."
+        }
+      },
+      {
+        "id": 22,
+        "stem": "The word <strong>They</strong> in paragraph 4 refers to _____.",
+        "choices": {
+          "A": "services",
+          "B": "policies",
+          "C": "prices",
+          "D": "sides"
+        }
+      },
+      {
+        "id": 23,
+        "stem": "What conclusion can be drawn from paragraph 4?",
+        "choices": {
+          "A": "Deducting the hidden costs is obligatory after a project claims to have a positive return.",
+          "B": "Regulations pricing natural resources are inherently harmful to growth.",
+          "C": "Damage caused by intentional ignorance regarding environmental costs is permanent.",
+          "D": "Considering opportunity costs ensures that development is truly justified."
+        }
+      },
+      {
+        "id": 24,
+        "stem": "Which of the following is true according to the passage?",
+        "choices": {
+          "A": "Opportunity costs are determined by the going rate for environmental services.",
+          "B": "Financial gain is the primary criterion for evaluating development projects.",
+          "C": "The true value of a project is measured not merely by its economic benefits.",
+          "D": "Preserving land in its natural state is economically sound as it consumes no resources."
+        }
+      },
+      {
+        "id": 25,
+        "stem": "Which of the following can be inferred from the passage?",
+        "choices": {
+          "A": "Policies that price environmental services are intended to restrict the scope of economic development.",
+          "B": "The benefits of industrial development generally exceed the value of preserved environmental services.",
+          "C": "Projects are forced to compensate for the economic losses in return for environmental preservation.",
+          "D": "The net gains produced by development projects overlooking opportunity costs tend to be overestimated."
+        }
+      },
+      {
+        "id": 26,
+        "stem": "Which of the following would be the best title for the passage?",
+        "choices": {
+          "A": "Environmental Policies in the Firing Line",
+          "B": "Natural Preservation: Ushering in a New Era",
+          "C": "Development: Factoring in Sacrifices",
+          "D": "Economic Development on the Line"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Questions 27–32: Summer Part-Time Jobs for Undergraduates",
+    "instruction": "Read the following advertisement and mark the letter A, B, C or D to indicate the option that best fits each numbered blank.",
+    "content": "\n        <h3>SUMMER PART-TIME JOBS FOR UNDERGRADUATES</h3>\n        <p>Techworld Magazine is delighted to announce two IT assistant vacancies up for (27) _____ this summer. The better understanding of STEM you have, (28) _____ likely you are to be selected! Successful applicants will get plenty of hands-on experience, good pay, and access to the local STEM community.</p>\n        <p>(29) _____, we offer flexible working hours and remote options for those living far away. On top of that, (30) _____ position requires previous experience as new recruits are provided with in-service training sessions.</p>\n        <p>Applications (31) _____ be submitted to us at info@techworldmagazine.com by 30 June.</p>\n        <p>Never before has there been such a(n) (32) _____ opportunity to kick-start your career in STEM. Don’t let this chance slip through your fingers – apply today!</p>\n        ",
+    "questions": [
+      {
+        "id": 27,
+        "stem": "(27) _____",
+        "choices": {
+          "A": "grasp",
+          "B": "gift",
+          "C": "grips",
+          "D": "grabs"
+        }
+      },
+      {
+        "id": 28,
+        "stem": "(28) _____",
+        "choices": {
+          "A": "the most",
+          "B": "most",
+          "C": "more",
+          "D": "the more"
+        }
+      },
+      {
+        "id": 29,
+        "stem": "(29) _____",
+        "choices": {
+          "A": "Additionally",
+          "B": "Consequently",
+          "C": "Subsequently",
+          "D": "Finally"
+        }
+      },
+      {
+        "id": 30,
+        "stem": "(30) _____",
+        "choices": {
+          "A": "neither",
+          "B": "both",
+          "C": "none",
+          "D": "either"
+        }
+      },
+      {
+        "id": 31,
+        "stem": "(31) _____",
+        "choices": {
+          "A": "ought",
+          "B": "should",
+          "C": "ought not",
+          "D": "should not"
+        }
+      },
+      {
+        "id": 32,
+        "stem": "(32) _____",
+        "choices": {
+          "A": "lively",
+          "B": "active",
+          "C": "golden",
+          "D": "private"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Questions 33–40: Note-taking by Hand and Laptop",
+    "instruction": "Read the passage and mark the letter A, B, C or D to indicate the best answer to each question.",
+    "content": "\n        <p>For decades, students have been convinced that academic success is largely dependent upon meticulous notetaking. What has changed in recent years is not the importance of the practice but the tools used to perform it. The keyboard has subtly supplanted the pen, and with it, the nature of how information is recorded during a lecture has shifted unbeknownst to students.</p>\n        <p>Researchers in cognitive psychology have begun to examine what this change has cost learners. In a series of comparative studies, students taking notes by hand consistently outperformed <strong>those</strong> using laptops on questions that demanded conceptual understanding, even when both groups had access to the same material. <u>The reason, according to the researchers, lies less in the technology itself than in what each method asks of the brain.</u> Typing rewards speed; handwriting forces selection.</p>\n        <p>The act of writing by hand is slower, and that slowness appears to be its hidden virtue. Unable to capture every word, students are obliged to listen, decide what matters and condense ideas into their own phrasing. This continuous filtering, referred to as encoding by psychologists, turns out to be <strong>instrumental</strong> in aiding long-term recall. One lecturer summarised the striking contrast after reviewing her students’ work: the laptops, she said, had produced transcripts, while the notebooks had produced understanding.</p>\n        <p>It would be misleading, of course, to claim that handwriting is inherently superior or that all keyboards undermine learning. Hard-working typists can summarise, while <strong>indolent</strong> writers can drift. What the research highlights is not a conclusion on devices but a question about effort: which tool, in a given context, asks more of the learner. As a ban on students’ use of laptops in classrooms remains a bone of contention among tertiary institutions, the deeper challenge may be helping students recognise that what feels easier in the moment is not always what serves them best afterwards.</p>\n        <p class=\"adapted\">Adapted from <em>brookings.edu</em></p>\n        ",
+    "questions": [
+      {
+        "id": 33,
+        "stem": "In paragraph 1, the writer is _____.",
+        "choices": {
+          "A": "introducing a recent change in the way students take notes",
+          "B": "challenging a long-held assumption about academic success",
+          "C": "promoting the use of technology in recording lectures",
+          "D": "questioning the significance of notetaking in education"
+        }
+      },
+      {
+        "id": 34,
+        "stem": "The word <strong>those</strong> in paragraph 2 refers to _____.",
+        "choices": {
+          "A": "students",
+          "B": "researchers",
+          "C": "studies",
+          "D": "notes"
+        }
+      },
+      {
+        "id": 35,
+        "stem": "Which of the following best paraphrases the underlined sentence in paragraph 2?",
+        "choices": {
+          "A": "The modern device, along with the mental requirements of each method for the brain, is responsible for the difference in student performance.",
+          "B": "What explains the difference in student performance is the mental work that each method of notetaking demands, rather than the technology.",
+          "C": "The difference in student performance is attributable to the modern technology instead of the mental work that each method of notetaking requires.",
+          "D": "Regardless of the method of notetaking, the effects on the brain exhibit little difference as long as technology is involved in student performance."
+        }
+      },
+      {
+        "id": 36,
+        "stem": "The word <strong>instrumental</strong> in paragraph 3 is OPPOSITE in meaning to _____.",
+        "choices": {
+          "A": "trivial",
+          "B": "specific",
+          "C": "dramatic",
+          "D": "central"
+        }
+      },
+      {
+        "id": 37,
+        "stem": "The word <strong>indolent</strong> in paragraph 4 is closest in meaning to _____.",
+        "choices": {
+          "A": "serious",
+          "B": "lazy",
+          "C": "careful",
+          "D": "active"
+        }
+      },
+      {
+        "id": 38,
+        "stem": "Which of the following statements would the writer <strong>NOT</strong> agree with?",
+        "choices": {
+          "A": "Handwritten and typed notes led to varied degrees of conceptual understanding.",
+          "B": "The slow speed of writing by hand turns out to be an advantage over typing.",
+          "C": "Students are unaware of the change in notetaking methods in class.",
+          "D": "Universities generally approve of prohibiting laptop use in classrooms."
+        }
+      },
+      {
+        "id": 39,
+        "stem": "In which paragraph does the writer mention a cognitive process?",
+        "choices": {
+          "A": "Paragraph 2",
+          "B": "Paragraph 1",
+          "C": "Paragraph 3",
+          "D": "Paragraph 4"
+        }
+      },
+      {
+        "id": 40,
+        "stem": "In which paragraph does the writer warn against an overgeneralisation?",
+        "choices": {
+          "A": "Paragraph 2",
+          "B": "Paragraph 1",
+          "C": "Paragraph 3",
+          "D": "Paragraph 4"
+        }
+      }
+    ]
+  }
+];
+    const answerKey = {
+  "1": "D",
+  "2": "D",
+  "3": "C",
+  "4": "D",
+  "5": "A",
+  "6": "B",
+  "7": "C",
+  "8": "C",
+  "9": "C",
+  "10": "A",
+  "11": "B",
+  "12": "D",
+  "13": "A",
+  "14": "C",
+  "15": "A",
+  "16": "B",
+  "17": "A",
+  "18": "D",
+  "19": "C",
+  "20": "B",
+  "21": "B",
+  "22": "B",
+  "23": "D",
+  "24": "C",
+  "25": "D",
+  "26": "C",
+  "27": "D",
+  "28": "D",
+  "29": "A",
+  "30": "A",
+  "31": "B",
+  "32": "C",
+  "33": "A",
+  "34": "A",
+  "35": "B",
+  "36": "A",
+  "37": "B",
+  "38": "D",
+  "39": "C",
+  "40": "D"
+};
+    const totalQuestions = Object.keys(answerKey).length;
+    const passagePane = document.getElementById('passagePane');
+    const rightPane = document.getElementById('rightPane');
+    const quizEl = document.getElementById('quiz');
+    const navEl = document.getElementById('questionNav');
+    const resultPanel = document.getElementById('resultPanel');
+    const progressText = document.getElementById('progressText');
+    const progressFill = document.getElementById('progressFill');
+    const statusText = document.getElementById('statusText');
+    const timerEl = document.getElementById('timer');
+    const checkButtons = [document.getElementById('checkBtn'), document.getElementById('checkBtnBottom')];
+    const resetButtons = [document.getElementById('resetBtn'), document.getElementById('resetBtnBottom')];
+
+    let secondsLeft = 60 * 60;
+    let submitted = false;
+    let timerId = null;
+
+    function pad(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function renderTime() {
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      timerEl.textContent = `${pad(minutes)}:${pad(seconds)}`;
+      timerEl.classList.toggle('warning', secondsLeft <= 5 * 60 && secondsLeft > 0);
+      timerEl.classList.toggle('expired', secondsLeft === 0);
+    }
+
+    function tick() {
+      if (submitted) return;
+      secondsLeft = Math.max(0, secondsLeft - 1);
+      renderTime();
+      if (secondsLeft === 0) {
+        checkAnswers('timeup');
+      }
+    }
+
+    function startTimer() {
+      renderTime();
+      timerId = setInterval(tick, 1000);
+    }
+
+    function questionSectionIndex(questionId) {
+      return quizData.findIndex((section) => section.questions.some((question) => Number(question.id) === Number(questionId)));
+    }
+
+    function hasSharedText(section) {
+      return Boolean(section.content && section.content.trim());
+    }
+
+    function scrollWithinPane(pane, target, extraOffset = 14) {
+      if (!pane || !target) return;
+      const paneRect = pane.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const top = pane.scrollTop + targetRect.top - paneRect.top - extraOffset;
+      pane.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+
+    function setActivePassage(target) {
+      passagePane.querySelectorAll('.active-passage').forEach((el) => el.classList.remove('active-passage'));
+      if (target) target.classList.add('active-passage');
+    }
+
+    function syncPassageForQuestion(questionId, shouldScroll = true) {
+      const sectionIndex = questionSectionIndex(questionId);
+      if (sectionIndex < 0) return;
+      const section = quizData[sectionIndex];
+      const targetId = hasSharedText(section) ? `passage-section-${sectionIndex}` : `passage-q${questionId}`;
+      const target = document.getElementById(targetId);
+      setActivePassage(target);
+      if (shouldScroll) scrollWithinPane(passagePane, target, 74);
+    }
+
+    function scrollToQuestion(questionId) {
+      const card = document.getElementById(`q${questionId}`);
+      scrollWithinPane(rightPane, card, 118);
+      syncPassageForQuestion(questionId, true);
+    }
+
+    function renderPassages() {
+      passagePane.innerHTML = '';
+
+      quizData.forEach((section, index) => {
+        const article = document.createElement('article');
+        article.className = 'passage-card';
+        article.id = `passage-section-${index}`;
+        article.dataset.sectionIndex = String(index);
+
+        const questionNumbers = section.questions.map((question) => question.id);
+        const first = questionNumbers[0];
+        const last = questionNumbers[questionNumbers.length - 1];
+        const range = first === last ? `Question ${first}` : `Questions ${first}–${last}`;
+
+        const head = document.createElement('div');
+        head.className = 'passage-head';
+        head.innerHTML = `
+          <span class="eyebrow">${range}</span>
+          <h2>${section.title}</h2>
+          <p class="instruction">${section.instruction}</p>
+        `;
+        article.appendChild(head);
+
+        if (hasSharedText(section)) {
+          const body = document.createElement('div');
+          body.className = 'passage-body';
+          body.innerHTML = section.content;
+          article.appendChild(body);
+        } else {
+          const prompts = document.createElement('div');
+          prompts.className = 'prompt-list';
+          section.questions.forEach((question) => {
+            const prompt = document.createElement('section');
+            prompt.className = 'prompt-card';
+            prompt.id = `passage-q${question.id}`;
+            prompt.innerHTML = `
+              <h3>Question ${question.id} prompt</h3>
+              <div>${question.stem}</div>
+            `;
+            prompts.appendChild(prompt);
+          });
+          article.appendChild(prompts);
+        }
+
+        passagePane.appendChild(article);
+      });
+    }
+
+    function renderQuestionStem(section, question) {
+      if (!hasSharedText(section)) {
+        return `
+          <p><strong>Question ${question.id}.</strong> Choose the best arrangement.</p>
+          <button class="prompt-link" type="button" data-prompt-target="passage-q${question.id}">View prompt on the left</button>
+        `;
+      }
+      if (String(question.stem).includes('<strong>Question')) {
+        return question.stem;
+      }
+      return `<p><strong>Question ${question.id}.</strong> ${question.stem}</p>`;
+    }
+
+    function renderQuiz() {
+      quizEl.innerHTML = '';
+      quizData.forEach((section, index) => {
+        const sectionEl = document.createElement('section');
+        sectionEl.className = 'section';
+        sectionEl.setAttribute('aria-labelledby', `section-${index}`);
+
+        const header = document.createElement('div');
+        header.className = 'question-section-header';
+        header.innerHTML = `
+          <h2 class="section-title" id="section-${index}">${section.title}</h2>
+          <p class="instruction">Questions are answered here. The related text is in the left half.</p>
+        `;
+        sectionEl.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'questions-grid';
+
+        section.questions.forEach((question) => {
+          const card = document.createElement('article');
+          card.className = 'q-card';
+          card.id = `q${question.id}`;
+          card.dataset.questionId = String(question.id);
+
+          const top = document.createElement('div');
+          top.className = 'q-top';
+
+          const number = document.createElement('div');
+          number.className = 'q-number';
+          number.textContent = question.id;
+
+          const stem = document.createElement('div');
+          stem.className = 'q-stem';
+          stem.innerHTML = renderQuestionStem(section, question);
+
+          const badge = document.createElement('div');
+          badge.className = 'badge';
+          badge.id = `badge-${question.id}`;
+          badge.textContent = 'Not checked';
+
+          top.append(number, stem, badge);
+          card.appendChild(top);
+
+          const choices = document.createElement('div');
+          choices.className = 'choices';
+          Object.entries(question.choices).forEach(([letter, text]) => {
+            const label = document.createElement('label');
+            label.className = 'choice';
+            label.dataset.questionId = String(question.id);
+            label.dataset.choice = letter;
+
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `q${question.id}`;
+            input.value = letter;
+            input.setAttribute('aria-label', `Question ${question.id}, choice ${letter}`);
+
+            const letterSpan = document.createElement('span');
+            letterSpan.className = 'choice-letter';
+            letterSpan.textContent = `${letter}.`;
+
+            const textSpan = document.createElement('span');
+            textSpan.className = 'choice-text';
+            textSpan.textContent = text;
+
+            label.append(input, letterSpan, textSpan);
+            choices.appendChild(label);
+          });
+
+          card.appendChild(choices);
+          grid.appendChild(card);
+        });
+
+        sectionEl.appendChild(grid);
+        quizEl.appendChild(sectionEl);
+      });
+    }
+
+    function renderNav() {
+      navEl.innerHTML = '';
+      for (let i = 1; i <= totalQuestions; i += 1) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'nav-btn';
+        button.textContent = String(i);
+        button.setAttribute('aria-label', `Go to question ${i}`);
+        button.addEventListener('click', () => scrollToQuestion(i));
+        navEl.appendChild(button);
+      }
+    }
+
+    function getSelectedAnswer(questionId) {
+      const selected = document.querySelector(`input[name="q${questionId}"]:checked`);
+      return selected ? selected.value : null;
+    }
+
+    function getAnsweredCount() {
+      let answered = 0;
+      for (let i = 1; i <= totalQuestions; i += 1) {
+        if (getSelectedAnswer(i)) answered += 1;
+      }
+      return answered;
+    }
+
+    function updateProgress() {
+      const answered = getAnsweredCount();
+      progressText.textContent = `Answered: ${answered} / ${totalQuestions}`;
+      progressFill.style.width = `${(answered / totalQuestions) * 100}%`;
+
+      const navButtons = [...navEl.querySelectorAll('.nav-btn')];
+      navButtons.forEach((button, index) => {
+        const qid = index + 1;
+        button.classList.toggle('answered', Boolean(getSelectedAnswer(qid)) && !submitted);
+      });
+    }
+
+    function freezeInputs() {
+      document.querySelectorAll('input[type="radio"]').forEach((input) => {
+        input.disabled = true;
+      });
+    }
+
+    function markAnswers() {
+      let correctCount = 0;
+      for (let questionId = 1; questionId <= totalQuestions; questionId += 1) {
+        const correct = answerKey[questionId];
+        const selected = getSelectedAnswer(questionId);
+        const card = document.getElementById(`q${questionId}`);
+        const badge = document.getElementById(`badge-${questionId}`);
+        const navButton = navEl.children[questionId - 1];
+
+        card.classList.remove('correct', 'incorrect');
+        [...card.querySelectorAll('.choice')].forEach((choice) => {
+          const letter = choice.dataset.choice;
+          choice.classList.remove('correct-answer', 'wrong-answer');
+          if (letter === correct) {
+            choice.classList.add('correct-answer');
+          }
+          if (selected && selected !== correct && letter === selected) {
+            choice.classList.add('wrong-answer');
+          }
+        });
+
+        if (selected === correct) {
+          correctCount += 1;
+          card.classList.add('correct');
+          badge.className = 'badge good';
+          badge.textContent = 'Correct';
+          navButton.className = 'nav-btn nav-correct';
+        } else {
+          card.classList.add('incorrect');
+          badge.className = 'badge bad';
+          badge.textContent = selected ? `Incorrect • Answer: ${correct}` : `Unanswered • Answer: ${correct}`;
+          navButton.className = 'nav-btn nav-wrong';
+        }
+      }
+      return correctCount;
+    }
+
+    function renderResult(correctCount, source) {
+      const incorrectCount = totalQuestions - correctCount;
+      const score = (correctCount / totalQuestions) * 10;
+      const answered = getAnsweredCount();
+      const title = source === 'timeup' ? 'Time is up — test submitted' : 'Test submitted';
+      const detail = source === 'timeup'
+        ? 'All questions are now frozen. You can review the highlighted answers below.'
+        : 'Your answers are now locked. You can review the highlighted answers below.';
+
+      resultPanel.classList.add('show');
+      resultPanel.innerHTML = `
+        <h2>${title}</h2>
+        <p>${detail}</p>
+        <div class="result-grid">
+          <div class="result-item"><b>${correctCount}</b><span>Correct answers</span></div>
+          <div class="result-item"><b>${incorrectCount}</b><span>Incorrect / unanswered</span></div>
+          <div class="result-item"><b>${answered}</b><span>Answered</span></div>
+          <div class="result-item"><b>${score.toFixed(2)}</b><span>Score / 10</span></div>
+        </div>
+      `;
+      scrollWithinPane(rightPane, resultPanel, 118);
+    }
+
+    function checkAnswers(source = 'manual') {
+      if (submitted) return;
+      submitted = true;
+      document.body.classList.add('submitted');
+      clearInterval(timerId);
+      freezeInputs();
+      const correctCount = markAnswers();
+      renderResult(correctCount, source);
+      checkButtons.forEach((button) => {
+        button.disabled = true;
+        button.textContent = 'Submitted';
+      });
+      statusText.textContent = source === 'timeup' ? 'Time up' : 'Submitted';
+      updateProgress();
+    }
+
+    function confirmRestart() {
+      const ok = confirm('Restart the test? Your current choices and score will be cleared.');
+      if (ok) window.location.reload();
+    }
+
+    document.addEventListener('change', (event) => {
+      if (event.target.matches('input[type="radio"]')) {
+        updateProgress();
+        const questionId = Number(event.target.name.replace('q', ''));
+        syncPassageForQuestion(questionId, false);
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const promptButton = event.target.closest('[data-prompt-target]');
+      if (promptButton) {
+        const target = document.getElementById(promptButton.dataset.promptTarget);
+        setActivePassage(target);
+        scrollWithinPane(passagePane, target, 74);
+        return;
+      }
+
+      const card = event.target.closest('.q-card');
+      if (card) {
+        syncPassageForQuestion(Number(card.dataset.questionId), false);
+      }
+    });
+
+    checkButtons.forEach((button) => button.addEventListener('click', () => checkAnswers('manual')));
+    resetButtons.forEach((button) => button.addEventListener('click', confirmRestart));
+
+    renderPassages();
+    renderQuiz();
+    renderNav();
+    updateProgress();
+    syncPassageForQuestion(1, false);
+    startTimer();
+  </script>
+</body>
+</html>
