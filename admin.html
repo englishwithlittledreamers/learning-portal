@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Learning Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Teacher Admin</h1>
+  <p>View student test results.</p>
+</header>
+
+<nav class="nav">
+  <a href="index.html">Home</a>
+  <a href="tests.html">Tests</a>
+  <a href="scores.html">Check Scores</a>
+</nav>
+
+<main class="container">
+
+  <section class="form-box">
+    <h2>Teacher Access</h2>
+
+    <label for="teacherPassword">Teacher password</label>
+    <input type="password" id="teacherPassword" placeholder="Enter teacher password">
+
+    <button onclick="loadAdminResults()">Load Results</button>
+    <button onclick="downloadCsv()">Download CSV</button>
+  </section>
+
+  <section id="adminResults"></section>
+
+</main>
+
+<script src="js/admin.js"></script>
+
+</body>
+</html>
