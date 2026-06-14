@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Students - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Manage Students</h1>
+  <p>Create student accounts and assign classes.</p>
+</header>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">Dashboard</a>
+  <a href="/teacher/results.html">Results</a>
+  <a href="/teacher/editor.html">New Post</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+
+  <section class="form-box">
+    <h2>Create Student</h2>
+
+    <label for="studentCode">Student code</label>
+    <input type="text" id="studentCode" placeholder="Example: B1A01">
+
+    <label for="fullName">Full name</label>
+    <input type="text" id="fullName" placeholder="Student full name">
+
+    <label for="classSelect">Class</label>
+    <select id="classSelect"></select>
+
+    <label for="initialPassword">Initial password</label>
+    <input type="text" id="initialPassword" placeholder="Example: LD2026@1234">
+
+    <button onclick="createStudent()">Create Student</button>
+  </section>
+
+  <section id="message"></section>
+
+  <section class="form-box">
+    <h2>Current Students</h2>
+    <div id="studentList"></div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+let classes = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["teacher"]);
+  if (!auth) return;
+
+  await loadClasses();
+  await loadStudents();
+});
+
+async function loadClasses() {
+  const { data, error } = await supabaseClient
+    .from("classes")
+    .select("id, code, name")
+    .eq("is_active", true)
+    .order("name");
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  classes = data || [];
+
+  const select = document.getElementById("classSelect");
+  select.innerHTML = "";
+
+  classes.forEach(cls => {
+    const option = document.createElement("option");
+    option.value = cls.id;
+    option.textContent = `${cls.name} (${cls.code})`;
+    select.appendChild(option);
+  });
+}
+
+async function loadStudents() {
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("student_code, full_name, class_id, is_active")
+    .eq("role", "student")
+    .order("student_code");
+
+  const container = document.getElementById("studentList");
+
+  if (error) {
+    container.innerHTML = `<p class="error">${error.message}</p>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    container.innerHTML = "<p>No students yet.</p>";
+    return;
+  }
+
+  let html = `
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Class</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  data.forEach(student => {
+    const cls = classes.find(c => c.id === student.class_id);
+
+    html += `
+      <tr>
+        <td>${student.student_code || ""}</td>
+        <td>${student.full_name}</td>
+        <td>${cls ? cls.name : ""}</td>
+        <td>${student.is_active ? "Active" : "Inactive"}</td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+async function createStudent() {
+  const studentCode = document.getElementById("studentCode").value.trim().toUpperCase();
+  const fullName = document.getElementById("fullName").value.trim();
+  const classId = document.getElementById("classSelect").value;
+  const initialPassword = document.getElementById("initialPassword").value.trim();
+  const message = document.getElementById("message");
+
+  if (!studentCode || !fullName || !classId || !initialPassword) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  const session = (await supabaseClient.auth.getSession()).data.session;
+
+  const response = await fetch("/api/create-student", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({
+      studentCode,
+      fullName,
+      classId,
+      initialPassword
+    })
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    message.innerHTML = `<div class="result-box"><p class="error">${result.message}</p></div>`;
+    return;
+  }
+
+  message.innerHTML = `
+    <div class="result-box">
+      <p class="success">Student created successfully.</p>
+      <p><strong>Student code:</strong> ${studentCode}</p>
+      <p><strong>Initial password:</strong> ${initialPassword}</p>
+      <p class="warning">Give this password to the student. They should change it after first login.</p>
+    </div>
+  `;
+
+  await loadStudents();
+}
+</script>
+
+</body>
+</html>
