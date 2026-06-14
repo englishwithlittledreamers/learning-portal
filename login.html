@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Little Dreamers Login</h1>
+  <p>Students and teachers can sign in here.</p>
+</header>
+
+<main class="container">
+
+  <section class="form-box">
+    <h2>Student Login</h2>
+
+    <label for="studentCode">Student code</label>
+    <input type="text" id="studentCode" placeholder="Example: B1A01">
+
+    <label for="studentPassword">Password</label>
+    <input type="password" id="studentPassword" placeholder="Enter your password">
+
+    <button onclick="loginStudent()">Login as Student</button>
+  </section>
+
+  <section class="form-box">
+    <h2>Teacher Login</h2>
+
+    <label for="teacherEmail">Teacher email</label>
+    <input type="email" id="teacherEmail" placeholder="teacher@englishwithlittledreamers.com">
+
+    <label for="teacherPassword">Password</label>
+    <input type="password" id="teacherPassword" placeholder="Enter your password">
+
+    <button onclick="loginTeacher()">Login as Teacher</button>
+  </section>
+
+  <section id="loginMessage"></section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+async function loginStudent() {
+  const studentCode = document.getElementById("studentCode").value.trim().toUpperCase();
+  const password = document.getElementById("studentPassword").value;
+  const message = document.getElementById("loginMessage");
+
+  if (!studentCode || !password) {
+    alert("Please enter your student code and password.");
+    return;
+  }
+
+  const email = studentCodeToEmail(studentCode);
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    message.innerHTML = `<div class="result-box"><p class="error">${error.message}</p></div>`;
+    return;
+  }
+
+  const { profile } = await getCurrentUserAndProfile();
+
+  if (!profile || profile.role !== "student") {
+    await supabaseClient.auth.signOut();
+    message.innerHTML = `<div class="result-box"><p class="error">This account is not a student account.</p></div>`;
+    return;
+  }
+
+  if (profile.must_change_password) {
+    window.location.href = "/student/change-password.html";
+  } else {
+    window.location.href = "/student/dashboard.html";
+  }
+}
+
+async function loginTeacher() {
+  const email = document.getElementById("teacherEmail").value.trim();
+  const password = document.getElementById("teacherPassword").value;
+  const message = document.getElementById("loginMessage");
+
+  if (!email || !password) {
+    alert("Please enter your email and password.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    message.innerHTML = `<div class="result-box"><p class="error">${error.message}</p></div>`;
+    return;
+  }
+
+  const { profile } = await getCurrentUserAndProfile();
+
+  if (!profile || profile.role !== "teacher") {
+    await supabaseClient.auth.signOut();
+    message.innerHTML = `<div class="result-box"><p class="error">This account is not a teacher account.</p></div>`;
+    return;
+  }
+
+  window.location.href = "/teacher/dashboard.html";
+}
+</script>
+
+</body>
+</html>
