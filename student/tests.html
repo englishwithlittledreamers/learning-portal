@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>My Tests - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>My Tests</h1>
+  <p>Practice tests assigned to your class.</p>
+</header>
+
+<nav class="nav">
+  <a href="/student/dashboard.html">Dashboard</a>
+  <a href="/student/lessons.html">Lessons</a>
+  <a href="/student/results.html">My Scores</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+  <section id="testList" class="grid"></section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["student"]);
+  if (!auth) return;
+
+  const { data, error } = await supabaseClient
+    .from("content_items")
+    .select("title, slug, summary, test_path, created_at")
+    .eq("content_type", "test")
+    .order("created_at", { ascending: false });
+
+  const list = document.getElementById("testList");
+
+  if (error) {
+    list.innerHTML = `<p class="error">${error.message}</p>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerHTML = `<p>No tests available yet.</p>`;
+    return;
+  }
+
+  data.forEach(item => {
+    const card = document.createElement("a");
+    card.className = "card";
+    card.href = item.test_path || `/student/content.html?slug=${encodeURIComponent(item.slug)}`;
+
+    const title = document.createElement("h3");
+    title.textContent = item.title;
+
+    const summary = document.createElement("p");
+    summary.textContent = item.summary || "";
+
+    card.append(title, summary);
+    list.appendChild(card);
+  });
+});
+</script>
+
+</body>
+</html>
