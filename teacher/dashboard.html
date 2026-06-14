@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Teacher Dashboard - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Teacher Dashboard</h1>
+  <p id="welcomeText">Welcome.</p>
+</header>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">Dashboard</a>
+  <a href="/teacher/students.html">Students</a>
+  <a href="/teacher/results.html">Results</a>
+  <a href="/teacher/editor.html">New Post</a>
+  <a href="/teacher/content-list.html">Content</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+  <section class="grid">
+    <a class="card" href="/teacher/students.html">
+      <h3>Manage Students</h3>
+      <p>Create student accounts and assign classes.</p>
+    </a>
+
+    <a class="card" href="/teacher/results.html">
+      <h3>View Results</h3>
+      <p>Check student scores and progress.</p>
+    </a>
+
+    <a class="card" href="/teacher/editor.html">
+      <h3>Create Content</h3>
+      <p>Publish tips, lessons, announcements, or test links.</p>
+    </a>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["teacher"]);
+  if (!auth) return;
+
+  document.getElementById("welcomeText").textContent =
+    `Welcome, ${auth.profile.full_name}.`;
+});
+</script>
+
+</body>
+</html>
