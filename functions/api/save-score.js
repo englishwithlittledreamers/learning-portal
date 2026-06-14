@@ -67,7 +67,7 @@ export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
 
-    const studentCode = cleanText(body.studentCode, 50);
+    const studentCode = cleanText(body.studentCode, 50).toUpperCase();
     const lookupPin = cleanText(body.lookupPin, 50);
 
     const testCode = cleanText(body.testCode, 80);
