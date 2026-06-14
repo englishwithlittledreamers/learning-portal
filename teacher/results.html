@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Results - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Student Results</h1>
+  <p>View test scores by student and class.</p>
+</header>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">Dashboard</a>
+  <a href="/teacher/students.html">Students</a>
+  <a href="/teacher/editor.html">New Post</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+
+  <section class="form-box">
+    <button onclick="loadResults()">Load Results</button>
+    <button onclick="downloadCsv()">Download CSV</button>
+  </section>
+
+  <section id="results"></section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+let latestResults = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["teacher"]);
+  if (!auth) return;
+
+  await loadResults();
+});
+
+async function loadResults() {
+  const { data, error } = await supabaseClient
+    .from("test_results")
+    .select("*")
+    .order("submitted_at", { ascending: false });
+
+  const container = document.getElementById("results");
+
+  if (error) {
+    container.innerHTML = `<p class="error">${error.message}</p>`;
+    return;
+  }
+
+  latestResults = data || [];
+
+  if (latestResults.length === 0) {
+    container.innerHTML = `<div class="result-box"><p>No results yet.</p></div>`;
+    return;
+  }
+
+  let html = `
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Student</th>
+          <th>Code</th>
+          <th>Class</th>
+          <th>Test</th>
+          <th>Skill</th>
+          <th>Correct</th>
+          <th>Score</th>
+          <th>Wrong Answers</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  latestResults.forEach(row => {
+    const wrong = Array.isArray(row.wrong_answers)
+      ? row.wrong_answers.join(", ")
+      : "";
+
+    html += `
+      <tr>
+        <td>${new Date(row.submitted_at).toLocaleString()}</td>
+        <td>${row.student_name}</td>
+        <td>${row.student_code}</td>
+        <td>${row.class_name || ""}</td>
+        <td>${row.test_name}</td>
+        <td>${row.skill || ""}</td>
+        <td>${row.correct_answers}/${row.total_questions}</td>
+        <td>${row.score}/10</td>
+        <td>${wrong || "None"}</td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+function downloadCsv() {
+  if (!latestResults.length) {
+    alert("No results to download.");
+    return;
+  }
+
+  const headers = [
+    "Date",
+    "Student Name",
+    "Student Code",
+    "Class",
+    "Test",
+    "Skill",
+    "Correct",
+    "Total",
+    "Score",
+    "Wrong Answers"
+  ];
+
+  const rows = latestResults.map(row => [
+    new Date(row.submitted_at).toLocaleString(),
+    row.student_name,
+    row.student_code,
+    row.class_name || "",
+    row.test_name,
+    row.skill || "",
+    row.correct_answers,
+    row.total_questions,
+    row.score,
+    Array.isArray(row.wrong_answers) ? row.wrong_answers.join(" | ") : ""
+  ]);
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "little-dreamers-results.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
