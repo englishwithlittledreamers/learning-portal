@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>New Content - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Create Content</h1>
+  <p>Publish public tips, student lessons, announcements, or test links.</p>
+</header>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">Dashboard</a>
+  <a href="/teacher/students.html">Students</a>
+  <a href="/teacher/results.html">Results</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+
+  <section class="form-box">
+    <label for="title">Title</label>
+    <input type="text" id="title" placeholder="Example: How to improve Reading speed">
+
+    <label for="slug">Slug</label>
+    <input type="text" id="slug" placeholder="Example: improve-reading-speed">
+
+    <label for="summary">Summary</label>
+    <textarea id="summary" rows="3"></textarea>
+
+    <label for="body">Body</label>
+    <textarea id="body" rows="12"></textarea>
+
+    <label for="contentType">Content type</label>
+    <select id="contentType">
+      <option value="tip">Tip</option>
+      <option value="lesson">Lesson</option>
+      <option value="test">Test</option>
+      <option value="announcement">Announcement</option>
+    </select>
+
+    <label for="accessLevel">Access level</label>
+    <select id="accessLevel">
+      <option value="public">Public - no login</option>
+      <option value="student">Students only</option>
+      <option value="teacher">Teachers only</option>
+    </select>
+
+    <label for="classSelect">Class</label>
+    <select id="classSelect">
+      <option value="">All classes / no specific class</option>
+    </select>
+
+    <label for="testPath">Test path, optional</label>
+    <input type="text" id="testPath" placeholder="/tests/thptqg-2026-portal-ready.html">
+
+    <label>
+      <input type="checkbox" id="isPublished">
+      Publish now
+    </label>
+
+    <button onclick="saveContent()">Save Content</button>
+  </section>
+
+  <section id="message"></section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+let currentProfile = null;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["teacher"]);
+  if (!auth) return;
+
+  currentProfile = auth.profile;
+  await loadClasses();
+});
+
+async function loadClasses() {
+  const { data, error } = await supabaseClient
+    .from("classes")
+    .select("id, code, name")
+    .eq("is_active", true)
+    .order("name");
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const select = document.getElementById("classSelect");
+
+  data.forEach(cls => {
+    const option = document.createElement("option");
+    option.value = cls.id;
+    option.textContent = `${cls.name} (${cls.code})`;
+    select.appendChild(option);
+  });
+}
+
+function makeSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
+async function saveContent() {
+  const title = document.getElementById("title").value.trim();
+  let slug = document.getElementById("slug").value.trim();
+  const summary = document.getElementById("summary").value.trim();
+  const body = document.getElementById("body").value.trim();
+  const contentType = document.getElementById("contentType").value;
+  const accessLevel = document.getElementById("accessLevel").value;
+  const classId = document.getElementById("classSelect").value || null;
+  const testPath = document.getElementById("testPath").value.trim() || null;
+  const isPublished = document.getElementById("isPublished").checked;
+  const message = document.getElementById("message");
+
+  if (!title) {
+    alert("Please enter a title.");
+    return;
+  }
+
+  if (!slug) {
+    slug = makeSlug(title);
+  }
+
+  const { error } = await supabaseClient
+    .from("content_items")
+    .insert({
+      title,
+      slug,
+      summary,
+      body,
+      content_type: contentType,
+      access_level: accessLevel,
+      class_id: classId,
+      test_path: testPath,
+      is_published: isPublished,
+      created_by: currentProfile.id,
+      updated_by: currentProfile.id
+    });
+
+  if (error) {
+    message.innerHTML = `<div class="result-box"><p class="error">${error.message}</p></div>`;
+    return;
+  }
+
+  message.innerHTML = `<div class="result-box"><p class="success">Content saved successfully.</p></div>`;
+}
+</script>
+
+</body>
+</html>
