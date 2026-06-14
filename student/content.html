@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Content - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/student/dashboard.html">Dashboard</a>
+  <a href="/student/lessons.html">Lessons</a>
+  <a href="/student/tests.html">Tests</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+  <article class="hero">
+    <h1 id="title">Loading...</h1>
+    <p id="summary"></p>
+  </article>
+
+  <section class="card">
+    <div id="body"></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["student", "teacher"]);
+  if (!auth) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get("slug");
+
+  if (!slug) {
+    document.getElementById("title").textContent = "Content not found";
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("content_items")
+    .select("title, summary, body")
+    .eq("slug", slug)
+    .single();
+
+  if (error || !data) {
+    document.getElementById("title").textContent = "Content not found";
+    return;
+  }
+
+  document.getElementById("title").textContent = data.title;
+  document.getElementById("summary").textContent = data.summary || "";
+  document.getElementById("body").textContent = data.body || "";
+});
+</script>
+
+</body>
+</html>
