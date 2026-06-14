@@ -1,10 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="../css/style.css">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Split-screen Interactive English Test — Mã đề 1101</title>
+  <title>THPTQG 2026 English Test — Mã đề 1101 | Learning Portal</title>
   <style>
     :root {
       --bg: #eef3f8;
@@ -588,6 +587,157 @@
       margin: 0 0 24px;
     }
 
+
+
+    .portal-nav {
+      flex: 0 0 auto;
+      z-index: 70;
+      background: #0f172a;
+      color: #ffffff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .portal-nav-inner {
+      width: 100%;
+      padding: 9px clamp(14px, 2.5vw, 24px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .portal-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+
+    .portal-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .portal-links a {
+      color: #dbeafe;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .portal-links a:hover,
+    .portal-links a:focus-visible {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.18);
+      outline: none;
+    }
+
+    .student-card {
+      margin: 0 0 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--small-shadow);
+    }
+
+    .student-card h2 {
+      margin: 0 0 6px;
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+    }
+
+    .student-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .student-field label {
+      display: block;
+      margin: 0 0 5px;
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 0.88rem;
+    }
+
+    .student-field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font: inherit;
+      color: var(--ink);
+      background: #fbfdff;
+      outline: none;
+      transition: border-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    .student-field input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+    }
+
+    .student-help {
+      margin-top: 10px !important;
+      font-size: 0.88rem !important;
+    }
+
+    .save-status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .save-status.save-pending {
+      color: #1e3a8a;
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+
+    .save-status.save-ok {
+      color: var(--good-text);
+      border-color: var(--good-border);
+      background: var(--good-bg);
+    }
+
+    .save-status.save-error {
+      color: var(--bad-text);
+      border-color: var(--bad-border);
+      background: var(--bad-bg);
+    }
+
+    .retry-save-btn {
+      display: none;
+      margin-top: 10px;
+      color: white;
+      background: #0f766e;
+    }
+
+    .retry-save-btn.show {
+      display: inline-flex;
+    }
+
     @media (max-width: 1060px) {
       .split-main { grid-template-columns: 44% 56%; }
       .choices { grid-template-columns: 1fr; }
@@ -611,6 +761,8 @@
       .q-top { flex-direction: column; }
       .q-number { width: 38px; height: 38px; }
       .result-grid { grid-template-columns: 1fr; }
+      .student-grid { grid-template-columns: 1fr; }
+      .portal-nav-inner { align-items: flex-start; }
     }
 
     @media print {
@@ -624,12 +776,21 @@
   </style>
 </head>
 <body>
-  <nav class="nav"> <a href="../index.html">Home</a> <a href="../lessons.html">Lessons</a> <a href="../tests.html">Tests</a> <a href="../scores.html">Check Scores</a> </nav>
+  <nav class="portal-nav" aria-label="Learning portal navigation">
+    <div class="portal-nav-inner">
+      <a class="portal-home" href="../index.html">← Learning Portal</a>
+      <div class="portal-links">
+        <a href="../lessons.html">Lessons</a>
+        <a href="../tests.html">Tests</a>
+        <a href="../scores.html">Check Scores</a>
+      </div>
+    </div>
+  </nav>
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <strong>Interactive English Multiple Choice Test</strong>
-        <span>Mã đề 1101 • Split-screen mode • 40 questions</span>
+        <strong>THPTQG 2026 English Practice Test</strong>
+        <span>Mã đề 1101 • Split-screen mode • 40 questions • Portal score saving</span>
       </div>
       <div class="timer-wrap" aria-label="Countdown timer">
         <span class="timer-label">Time left</span>
@@ -644,7 +805,23 @@
     <section id="rightPane" class="pane question-pane" aria-label="Questions and answer choices">
       <section class="pane-heading">
         <h1>Đề tiếng Anh THPTQG 2026 — Mã đề 1101</h1>
-        <p>Read in the left half, answer in the right half. Click <strong>Check Answers</strong> to lock the test and see your score out of 10.</p>
+        <p>Read in the left half, answer in the right half. Enter your student code and PIN before submitting so your result can be saved to the learning portal.</p>
+      </section>
+
+      <section class="student-card" aria-label="Student information">
+        <h2>Student Information</h2>
+        <p>Enter your portal student code and PIN. Your score will be saved after submission.</p>
+        <div class="student-grid">
+          <div class="student-field">
+            <label for="studentCode">Student code</label>
+            <input id="studentCode" name="studentCode" type="text" placeholder="Example: B1A01" autocomplete="username">
+          </div>
+          <div class="student-field">
+            <label for="lookupPin">PIN</label>
+            <input id="lookupPin" name="lookupPin" type="password" placeholder="Example: 1234" autocomplete="current-password">
+          </div>
+        </div>
+        <p class="student-help">If your code or PIN is incorrect, the score will still appear on this page but may not be saved. You can correct the details and retry saving after submission.</p>
       </section>
 
       <section class="toolbar" aria-label="Quiz controls">
@@ -1161,6 +1338,14 @@
   "40": "D"
 };
     const totalQuestions = Object.keys(answerKey).length;
+    const TEST_INFO = {
+      testCode: "THPTQG_2026_1101",
+      testName: "Đề tiếng Anh THPTQG 2026 — Mã đề 1101",
+      course: "THPTQG 2026",
+      skill: "English Multiple Choice",
+      durationSeconds: 60 * 60
+    };
+    const SAVE_SCORE_ENDPOINT = "/api/save-score";
     const passagePane = document.getElementById('passagePane');
     const rightPane = document.getElementById('rightPane');
     const quizEl = document.getElementById('quiz');
@@ -1173,9 +1358,11 @@
     const checkButtons = [document.getElementById('checkBtn'), document.getElementById('checkBtnBottom')];
     const resetButtons = [document.getElementById('resetBtn'), document.getElementById('resetBtnBottom')];
 
-    let secondsLeft = 60 * 60;
+    let secondsLeft = TEST_INFO.durationSeconds;
     let submitted = false;
     let timerId = null;
+    let lastResultData = null;
+    let scoreSaved = false;
 
     function pad(value) {
       return String(value).padStart(2, '0');
@@ -1460,43 +1647,208 @@
       return correctCount;
     }
 
-    function renderResult(correctCount, source) {
+    function getStudentCredentials() {
+      const studentCodeInput = document.getElementById('studentCode');
+      const lookupPinInput = document.getElementById('lookupPin');
+
+      return {
+        studentCode: studentCodeInput ? studentCodeInput.value.trim() : '',
+        lookupPin: lookupPinInput ? lookupPinInput.value.trim() : ''
+      };
+    }
+
+    function validateStudentCredentials() {
+      const { studentCode, lookupPin } = getStudentCredentials();
+
+      if (!studentCode || !lookupPin) {
+        alert('Please enter your student code and PIN before submitting.');
+        const target = !studentCode ? document.getElementById('studentCode') : document.getElementById('lookupPin');
+        if (target) target.focus();
+        return false;
+      }
+
+      return true;
+    }
+
+    function buildAnswerReport() {
+      const answers = {};
+      const wrongAnswers = [];
+      const unanswered = [];
+
+      for (let questionId = 1; questionId <= totalQuestions; questionId += 1) {
+        const selected = getSelectedAnswer(questionId);
+        const correct = answerKey[questionId];
+        const isCorrect = selected === correct;
+
+        answers[`q${questionId}`] = {
+          selected,
+          correct,
+          isCorrect
+        };
+
+        if (!selected) {
+          unanswered.push(questionId);
+        }
+
+        if (!isCorrect) {
+          wrongAnswers.push(`Q${questionId}: ${selected || 'blank'} → ${correct}`);
+        }
+      }
+
+      return { answers, wrongAnswers, unanswered };
+    }
+
+    function buildResultData(correctCount, source) {
+      const report = buildAnswerReport();
       const incorrectCount = totalQuestions - correctCount;
-      const score = (correctCount / totalQuestions) * 10;
       const answered = getAnsweredCount();
+      const score = Number(((correctCount / totalQuestions) * 10).toFixed(2));
+      const elapsedSeconds = Math.max(0, TEST_INFO.durationSeconds - secondsLeft);
+
+      return {
+        source,
+        correctCount,
+        incorrectCount,
+        answered,
+        totalQuestions,
+        score,
+        answers: report.answers,
+        wrongAnswers: report.wrongAnswers,
+        unanswered: report.unanswered,
+        timeSpentSeconds: elapsedSeconds
+      };
+    }
+
+    function updateSaveStatus(message, className = '') {
+      const saveStatus = document.getElementById('saveStatus');
+      if (!saveStatus) return;
+
+      saveStatus.className = `save-status ${className}`.trim();
+      saveStatus.textContent = message;
+    }
+
+    function toggleRetrySaveButton(show) {
+      const retryButton = document.getElementById('retrySaveBtn');
+      if (!retryButton) return;
+      retryButton.classList.toggle('show', Boolean(show));
+    }
+
+    async function saveScoreToPortal(resultData) {
+      const { studentCode, lookupPin } = getStudentCredentials();
+
+      if (scoreSaved) {
+        updateSaveStatus('This score has already been saved to the portal.', 'save-ok');
+        toggleRetrySaveButton(false);
+        return;
+      }
+
+      if (!studentCode || !lookupPin) {
+        updateSaveStatus('Score shown locally only. Student code and PIN were not entered, so this attempt was not saved to the portal.', 'save-error');
+        toggleRetrySaveButton(true);
+        return;
+      }
+
+      if (window.location.protocol === 'file:') {
+        updateSaveStatus('Score shown locally only. Portal saving works after this file is deployed on Cloudflare Pages.', 'save-error');
+        toggleRetrySaveButton(true);
+        return;
+      }
+
+      updateSaveStatus('Saving your score to the learning portal...', 'save-pending');
+      toggleRetrySaveButton(false);
+
+      try {
+        const response = await fetch(SAVE_SCORE_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            studentCode,
+            lookupPin,
+
+            testCode: TEST_INFO.testCode,
+            testName: TEST_INFO.testName,
+            course: TEST_INFO.course,
+            skill: TEST_INFO.skill,
+
+            correctAnswers: resultData.correctCount,
+            totalQuestions: resultData.totalQuestions,
+            score: resultData.score,
+            wrongAnswers: resultData.wrongAnswers,
+            answers: resultData.answers,
+            timeSpentSeconds: resultData.timeSpentSeconds
+          })
+        });
+
+        let data = null;
+        try {
+          data = await response.json();
+        } catch {
+          data = null;
+        }
+
+        if (!response.ok || !data || data.success !== true) {
+          throw new Error((data && data.message) || 'Could not save score.');
+        }
+
+        scoreSaved = true;
+        updateSaveStatus('Your score has been saved to the learning portal successfully.', 'save-ok');
+        toggleRetrySaveButton(false);
+      } catch (error) {
+        console.error('Score saving error:', error);
+        updateSaveStatus(`${error.message || 'Your score could not be saved.'} Please check your student code/PIN or tell your teacher.`, 'save-error');
+        toggleRetrySaveButton(true);
+      }
+    }
+
+    function renderResult(resultData, source) {
       const title = source === 'timeup' ? 'Time is up — test submitted' : 'Test submitted';
       const detail = source === 'timeup'
-        ? 'All questions are now frozen. You can review the highlighted answers below.'
-        : 'Your answers are now locked. You can review the highlighted answers below.';
+        ? 'All questions are now frozen. You can review the highlighted answers below. If student details were entered, the score will be saved to the portal.'
+        : 'Your answers are now locked. You can review the highlighted answers below. The portal will now save your score.';
 
       resultPanel.classList.add('show');
       resultPanel.innerHTML = `
         <h2>${title}</h2>
         <p>${detail}</p>
         <div class="result-grid">
-          <div class="result-item"><b>${correctCount}</b><span>Correct answers</span></div>
-          <div class="result-item"><b>${incorrectCount}</b><span>Incorrect / unanswered</span></div>
-          <div class="result-item"><b>${answered}</b><span>Answered</span></div>
-          <div class="result-item"><b>${score.toFixed(2)}</b><span>Score / 10</span></div>
+          <div class="result-item"><b>${resultData.correctCount}</b><span>Correct answers</span></div>
+          <div class="result-item"><b>${resultData.incorrectCount}</b><span>Incorrect / unanswered</span></div>
+          <div class="result-item"><b>${resultData.answered}</b><span>Answered</span></div>
+          <div class="result-item"><b>${resultData.score.toFixed(2)}</b><span>Score / 10</span></div>
         </div>
+        <div id="saveStatus" class="save-status save-pending">Preparing to save your score...</div>
+        <button id="retrySaveBtn" class="retry-save-btn" type="button">Retry saving score</button>
       `;
       scrollWithinPane(rightPane, resultPanel, 118);
     }
 
-    function checkAnswers(source = 'manual') {
+    async function checkAnswers(source = 'manual') {
       if (submitted) return;
+
+      if (source !== 'timeup' && !validateStudentCredentials()) {
+        return;
+      }
+
       submitted = true;
       document.body.classList.add('submitted');
       clearInterval(timerId);
       freezeInputs();
+
       const correctCount = markAnswers();
-      renderResult(correctCount, source);
+      const resultData = buildResultData(correctCount, source);
+      lastResultData = resultData;
+
+      renderResult(resultData, source);
       checkButtons.forEach((button) => {
         button.disabled = true;
         button.textContent = 'Submitted';
       });
       statusText.textContent = source === 'timeup' ? 'Time up' : 'Submitted';
       updateProgress();
+
+      await saveScoreToPortal(resultData);
     }
 
     function confirmRestart() {
@@ -1513,6 +1865,12 @@
     });
 
     document.addEventListener('click', (event) => {
+      const retrySaveButton = event.target.closest('#retrySaveBtn');
+      if (retrySaveButton) {
+        if (lastResultData) saveScoreToPortal(lastResultData);
+        return;
+      }
+
       const promptButton = event.target.closest('[data-prompt-target]');
       if (promptButton) {
         const target = document.getElementById(promptButton.dataset.promptTarget);
