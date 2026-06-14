@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Check Scores - Learning Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Check Your Scores</h1>
+  <p>Enter your student code and PIN to view your test results.</p>
+</header>
+
+<nav class="nav">
+  <a href="index.html">Home</a>
+  <a href="lessons.html">Lessons</a>
+  <a href="tests.html">Tests</a>
+  <a href="scores.html">Check Scores</a>
+</nav>
+
+<main class="container">
+
+  <section class="form-box">
+    <h2>Score Lookup</h2>
+
+    <label for="lookupStudentCode">Student code</label>
+    <input type="text" id="lookupStudentCode" placeholder="Example: B1A01">
+
+    <label for="lookupPin">PIN</label>
+    <input type="password" id="lookupPin" placeholder="Example: 1234">
+
+    <button onclick="searchScores()">Search Scores</button>
+  </section>
+
+  <section id="scoreResults"></section>
+
+</main>
+
+<footer>
+  <p>© 2026 Your Learning Portal</p>
+</footer>
+
+<script src="js/score-lookup.js"></script>
+
+</body>
+</html>
