@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard - Little Dreamers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Student Dashboard</h1>
+  <p id="welcomeText">Welcome back.</p>
+</header>
+
+<nav class="nav">
+  <a href="/student/dashboard.html">Dashboard</a>
+  <a href="/student/lessons.html">Lessons</a>
+  <a href="/student/tests.html">Tests</a>
+  <a href="/student/results.html">My Scores</a>
+  <a href="/student/change-password.html">Change Password</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main class="container">
+  <section class="grid">
+    <a class="card" href="/student/lessons.html">
+      <h3>My Lessons</h3>
+      <p>View class lessons and exclusive learning materials.</p>
+    </a>
+
+    <a class="card" href="/student/tests.html">
+      <h3>My Tests</h3>
+      <p>Take practice tests assigned to your class.</p>
+    </a>
+
+    <a class="card" href="/student/results.html">
+      <h3>My Scores</h3>
+      <p>Check your previous test results.</p>
+    </a>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const auth = await requireRole(["student"]);
+  if (!auth) return;
+
+  document.getElementById("welcomeText").textContent =
+    `Welcome, ${auth.profile.full_name}.`;
+
+  if (auth.profile.must_change_password) {
+    window.location.href = "/student/change-password.html";
+  }
+});
+</script>
+
+</body>
+</html>
